@@ -84,7 +84,7 @@ if __name__ == "__main__":
     TTRSS_USER = parser.get('ttrss', 'username')
     TTRSS_PASSWORD = parser.get('ttrss', 'password')
     TTRSS_FEED_ID = parser.getint('ttrss', 'feed_id')
-    TTRSS_IS_CAT = parser.getboolean('ttrss', 'feed_id')
+    TTRSS_IS_CAT = parser.getboolean('ttrss', 'is_cat')
     NOTIFY_TIMEOUT = parser.getint('notify', 'timeout')
 
     # check feed
