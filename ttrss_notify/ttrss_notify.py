@@ -8,7 +8,7 @@ from ConfigParser import SafeConfigParser
 
 import pynotify
 
-DEFAULT_CONFIG_FILE = "~/.ttrss-notify.ini"
+DEFAULT_CONFIG_FILE = "~/.ttrss-notify.cfg"
 INTERVAL = 300
 
 
