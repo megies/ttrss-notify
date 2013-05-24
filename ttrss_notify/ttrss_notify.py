@@ -103,7 +103,8 @@ class TTRSS(object):
         summary = "RSS: %i unread in %s" % (category['unread'],
                                             category['title'])
         body = "&#8226; " + "\n&#8226; ".join([h['title'] for h in headlines])
-        body += "\n<a href='%s'>open TTRSS</a>" % self.baseurl
+        body += "\n<a href='%s/#f=%i&amp;c=%i'>open TTRSS</a>" % \
+                (self.baseurl, self.ttrss_feed_id, self.ttrss_is_cat)
         noti = pynotify.Notification(summary, body)
         noti.set_timeout(self.notify_timeout)
         noti.show()
