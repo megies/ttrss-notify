@@ -52,16 +52,21 @@ class TTRSS(object):
         res = self._request(req)
         return int(res['content']['unread'])
 
-    def getHeadlines(self):
-        req = {'op': 'getHeadlines', 'feed_id': TTRSS_FEED_ID,
-               'is_cat': TTRSS_IS_CAT, 'view_mode': "unread"}
+    def getHeadlines(self, feed_id, is_cat):
+        req = {'op': 'getHeadlines', 'feed_id': feed_id,
+               'is_cat': is_cat, 'view_mode': "unread"}
         res = self._request(req)
-        return [item['title'] for item in res['content']]
+        return res['content']
 
     def getCategories(self):
         req = {'op': 'getCategories'}
         res = self._request(req)
-        return dict([(item['id'], item['title']) for item in res['content']])
+        return dict([(int(item['id']), item) for item in res['content']])
+
+    def getFeeds(self):
+        req = {'op': 'getFeeds', 'cat_id': -3}
+        res = self._request(req)
+        return dict([(int(item['id']), item) for item in res['content']])
 
 
 if __name__ == "__main__":
@@ -89,15 +94,20 @@ if __name__ == "__main__":
 
     # check feed
     with TTRSS() as ttrss:
-        category = ttrss.getCategories()[str(TTRSS_FEED_ID)]
-        headlines = ttrss.getHeadlines()
+        headlines = None
+        if TTRSS_IS_CAT:
+            categories = ttrss.getCategories()
+        else:
+            categories = ttrss.getFeeds()
+        category = categories[TTRSS_FEED_ID]
+        if category['unread']:
+            headlines = ttrss.getHeadlines(TTRSS_FEED_ID, TTRSS_IS_CAT)
 
     # notify if any unread messages
     if headlines:
-        #headlines = ttrss.getUnreadCount()
-
-        summary = "RSS: %i unread in %s" % (len(headlines), category)
-        body = "\n".join(headlines)
+        summary = "RSS: %i unread in %s" % (category['unread'],
+                                            category['title'])
+        body = "\n".join([h['title'] for h in headlines])
         body += "\n<a href='%s'>open TTRSS</a>" % BASEURL
         pynotify.init("tinyrss")
         noti = pynotify.Notification(summary, body)
