@@ -80,7 +80,7 @@ class TTRSS(object):
         return dict([(int(item['id']), item) for item in res['content']])
 
     def getFeeds(self):
-        req = {'op': 'getFeeds', 'cat_id': -3}
+        req = {'op': 'getFeeds', 'cat_id': -4}
         res = self._request(req)
         return dict([(int(item['id']), item) for item in res['content']])
 
