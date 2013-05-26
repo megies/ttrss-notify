@@ -17,6 +17,7 @@ class TTRSS(object):
         # parse configuration
         parser = SafeConfigParser()
         parser.read(config_file)
+        self.interval = parser.get('base', 'interval')
         self.baseurl = parser.get('web', 'baseurl')
         web_auth_method = parser.get('web', 'auth_method')
         web_realm = parser.get('web', 'realm')
