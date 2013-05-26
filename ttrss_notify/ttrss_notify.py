@@ -4,6 +4,7 @@ import sys
 import json
 import time
 import urllib2
+import imghdr
 from ConfigParser import SafeConfigParser
 
 import pynotify
@@ -28,6 +29,13 @@ class TTRSS(object):
         self.ttrss_feed_id = parser.getint('ttrss', 'feed_id')
         self.ttrss_is_cat = parser.getboolean('ttrss', 'is_cat')
         self.notify_timeout = parser.getint('notify', 'timeout')
+        image = parser.get('notify', 'image')
+        try:
+            # see if imghdr can find a valid image
+            imghdr.what(image)
+            self.image = image
+        except:
+            self.image = None
         self.apiurl = self.baseurl + '/api/'
         # install http auth handler / opener
         pwm = urllib2.HTTPPasswordMgr()
@@ -106,7 +114,7 @@ class TTRSS(object):
         body = "&#8226; " + "\n&#8226; ".join([h['title'] for h in headlines])
         body += "\n<a href='%s/#f=%i&amp;c=%i'>open TTRSS</a>" % \
                 (self.baseurl, self.ttrss_feed_id, self.ttrss_is_cat)
-        noti = pynotify.Notification(summary, body)
+        noti = pynotify.Notification(summary, body, self.image)
         noti.set_timeout(self.notify_timeout)
         noti.show()
 
