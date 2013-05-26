@@ -5,6 +5,7 @@ import json
 import time
 import urllib2
 import imghdr
+import traceback
 from ConfigParser import SafeConfigParser
 
 import pynotify
@@ -106,16 +107,17 @@ class TTRSS(object):
                                           self.ttrss_is_cat)
         # notify if any unread messages
         if headlines:
-            self.notify(category, headlines)
+            summary = "TTRSS: %i unread in %s" % (category['unread'],
+                                                  category['title'])
+            body = "&#8226; "
+            body += "\n&#8226; ".join([h['title'] for h in headlines])
+            body += "\n<a href='%s/#f=%i&amp;c=%i'>open TTRSS</a>" % \
+                    (self.baseurl, self.ttrss_feed_id, self.ttrss_is_cat)
+            self.notify(summary, body, self.notify_timeout)
 
-    def notify(self, category, headlines):
-        summary = "RSS: %i unread in %s" % (category['unread'],
-                                            category['title'])
-        body = "&#8226; " + "\n&#8226; ".join([h['title'] for h in headlines])
-        body += "\n<a href='%s/#f=%i&amp;c=%i'>open TTRSS</a>" % \
-                (self.baseurl, self.ttrss_feed_id, self.ttrss_is_cat)
+    def notify(self, summary, body, timeout):
         noti = pynotify.Notification(summary, body, self.image)
-        noti.set_timeout(self.notify_timeout)
+        noti.set_timeout(timeout)
         noti.show()
 
 
@@ -129,7 +131,12 @@ def main():
 
     with TTRSS(filename) as ttrss:
         while True:
-            ttrss.runOnce()
+            try:
+                ttrss.runOnce()
+            except Exception:
+                exc_info = sys.exc_info()
+                info = "".join(traceback.format_exception(*exc_info))
+                ttrss.notify("TTRSS: Caught exception", info, 0)
             time.sleep(INTERVAL)
 
 
