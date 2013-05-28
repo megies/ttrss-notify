@@ -18,6 +18,7 @@ class TTRSS(object):
         # parse configuration
         parser = SafeConfigParser()
         parser.read(config_file)
+        self.initial_timeout = parser.get('base', 'initial_timeout')
         self.interval = parser.get('base', 'interval')
         self.baseurl = parser.get('web', 'baseurl')
         web_auth_method = parser.get('web', 'auth_method')
@@ -129,6 +130,7 @@ def main():
         pass
 
     with TTRSS(filename) as ttrss:
+        time.sleep(ttrss.initial_timeout)
         while True:
             try:
                 ttrss.runOnce()
