@@ -11,7 +11,6 @@ from ConfigParser import SafeConfigParser
 import pynotify
 
 DEFAULT_CONFIG_FILE = "~/.ttrss-notify.cfg"
-INTERVAL = 300
 
 
 class TTRSS(object):
@@ -137,7 +136,7 @@ def main():
                 exc_info = sys.exc_info()
                 info = "".join(traceback.format_exception(*exc_info))
                 ttrss.notify("TTRSS: Caught exception", info, 0)
-            time.sleep(INTERVAL)
+            time.sleep(ttrss.interval)
 
 
 if __name__ == "__main__":
