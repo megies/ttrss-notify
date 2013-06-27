@@ -8,7 +8,7 @@ import imghdr
 import traceback
 from ConfigParser import SafeConfigParser
 
-import pynotify
+import notify2
 
 DEFAULT_CONFIG_FILE = "~/.ttrss-notify.cfg"
 
@@ -51,7 +51,7 @@ class TTRSS(object):
         # login to tiny rss
         self.session_id = ""
         self.login(ttrss_user, ttrss_password)
-        pynotify.init("tinyrss")
+        notify2.init("tinyrss")
 
     def __enter__(self):
         return self
@@ -116,7 +116,7 @@ class TTRSS(object):
             self.notify(summary, body, self.notify_timeout)
 
     def notify(self, summary, body, timeout):
-        noti = pynotify.Notification(summary, body, self.image)
+        noti = notify2.Notification(summary, body, self.image)
         noti.set_timeout(timeout)
         noti.show()
 
